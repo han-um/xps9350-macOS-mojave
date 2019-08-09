@@ -1,0 +1,9 @@
+#!/bin/sh
+#
+# Added mount Disk for "OS X" (c) syscl/lighting/Yating Zhou.
+#
+
+gMountPartition="/tmp/com.syscl.externalfix"
+
+cat ${gMountPartition} 2>/dev/null | xargs -I {} diskutil mount {}
+rm ${gMountPartition}

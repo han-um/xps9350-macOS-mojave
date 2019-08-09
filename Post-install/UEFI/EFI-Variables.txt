@@ -1,0 +1,23 @@
+Intel(R) SpeedStep(tm)
+1.9.0: 0xD7 --> 1 (Enabled, Default: Enabled)
+
+Intel(R) Speed Shift Technology
+1.9.0: 0xD8 --> 1 (Enabled, Default: Disabled)
+
+CFG Lock
+1.9.0: 0x109 --> 0 (Disabled, Default: Enabled)
+
+DVMT Pre-Allocated
+1.9.0: 0x785 --> 0x432 (192MB, Default: 32MB)
+
+DVMT Total Gfx Mem
+1.9.0: 0x786 --> 0x433 (MAX, Default: 128MB)
+
+
+----------------
+Thunderbolt(TM) Support
+1.9.0: 0xFE2 --> 1 (Enabled, Default: Enabled)
+
+Thunderbolt Usb Support
+1.9.0: 0x120 --> 1 (Enabled, Default: Disabled)
+

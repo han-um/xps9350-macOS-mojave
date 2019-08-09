@@ -1,0 +1,76 @@
+#!/bin/bash
+#
+# This script aims to unmount all external devices automatically before sleep.
+#
+# Without this procedure, various computers with OS X/Mac OS X(even on a real Mac) suffer from "Disk not ejected properly"
+# issue when therere external devices plugged-in. Thats the reason why I created this script to fix this issue. (syscl/lighting/Yating Zhou)
+#
+# All credit to Bernhard Baehr (bernhard.baehr@gmx.de), without his great sleepwatcher dameon, this fix will not be created.
+#
+
+#
+# Added unmount Disk for "OS X" (c) syscl/lighting/Yating Zhou.
+#
+
+export LANG=C
+
+gMountPartition="/tmp/com.syscl.externalfix"
+gDisk=($(ls /dev/disk? |grep -i -o "disk[0-9]"))
+gUSBDisk=""
+
+true > ${gMountPartition}
+
+for ((i=0; i<${#gDisk[@]}; ++i))
+do
+  gProtocol=$(diskutil info ${gDisk[i]} |grep -i "Protocol" |sed -e "s|Protocol:||" -e "s| ||g")
+  if [[ ${gProtocol} == *"USB"* ]];
+    then
+      gCurrent_Partitions=($(ls /dev/${gDisk[i]}s? |grep -o "disk[0-9]s[0-9]"))
+      for ((k=0; k<${#gCurrent_Partitions[@]}; ++k))
+      do
+        gConfirm_Mounted=$(diskutil info ${gCurrent_Partitions[k]} |grep -i Mounted |sed -e "s| Mounted:||" -e "s| ||g")
+        if [[ ${gConfirm_Mounted} == *"Yes"* ]];
+          then
+            echo ${gCurrent_Partitions[k]} >> ${gMountPartition}
+        fi
+      done
+      #diskutil eject ${gDisk[i]}
+	  gUSBDisk="${gUSBDisk}\n${gDisk[i]}"
+  fi
+done
+echo -e "${gUSBDisk}\n" | xargs -I {} diskutil eject {}
+
+#
+# Reset hibernate mode to 0 if hibernate mode has been changed by macOS
+#
+gTarHibernateMode=0
+gOrgHibernateMode=$(pmset -g |grep -i "hibernatemode" |sed "s|hibernatemode||")
+if [[ ${gOrgHibernateMode} != *"${gTarHibernateMode}"* ]]; then
+    pmset hibernatemode ${gTarHibernateMode}
+    gSleepImageSz=0
+    if [ -f /var/vm/sleepimage ]; then
+        gSleepImageSz=$(stat -f%z /var/vm/sleepimage)
+    fi
+    if [[ ${gSleepImageSz} != "0" ]]; then
+        rm /var/vm/sleepimage
+    fi
+fi
+#
+# Reset autopoweroff to 0 if autopoweroff has been changed by macOS
+#
+gTarAutopoweroff=0
+gOrigAutopoweroff=$(pmset -g |grep -v "autopoweroffdelay" | grep -i "autopoweroff" |sed "s|autopoweroff||")
+if [[ ${gOrigAutopoweroff} != *"${gTarAutopoweroff}"* ]]; then
+    pmset autopoweroff ${gTarAutopoweroff}
+fi
+#
+# Reset standby to 0 if standby has been changed by macOS
+#
+gTarStandby=0
+gOrgStandby=$(pmset -g |grep -v "standbydelay" | grep -i "standby" |sed "s|standby||")
+if [[ ${gOrgStandby} != *"${gTarStandby}"* ]]; then
+    pmset standby ${gTarStandby}
+fi
+
+#kill ComboJack
+#launchctl unload /Library/LaunchAgents/com.XPS.ComboJack.plist
