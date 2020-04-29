@@ -13,6 +13,13 @@
 * I just want to share the settings with XPS 13 9350 users of the same specifications.
 * I will not be able to answer any errors or issues that occur during the installation.
 
+## Simple Instruction (in English)
+* Install MojaveInstaller, Clover Bootloader to USB Drive (in VMWare or Your Own mac)
+* Mount EFI Partition, and Overwrite xps9350-macOS-mojave/CLOVER to /EFI/CLOVER
+* You need to Export ACPI
+  * in Clover Bootloader, Press F4 (or Fn+F4) to Export ACPI files
+  * Boot your own Mac (or Use PartitionWizard + Explorer++ to Mount EFI Partition)
+  * go to /EFI/CLOVER/ACPI/Origin, Copy it, and Overwrite into /EFI/CLOVER/ACPI/Patched
 
 ## 사양
 * 하드웨어
@@ -55,11 +62,17 @@
   * 설치중 설치 위치 변경... 을 눌러 USB에 설치해야 합니다.
 * USB의 EFI영역의 EFI/CLOVER를 첨부된 CLOVER 폴더로 대체합니다.
   * 맥의 대치와 병합이 익숙하지 않은 분들은 확실하게 원본 CLOVER를 삭제하고, 옮기시는걸 추천합니다.
-
+  
+### 2-1. ACPI 추출하기 (2020.04 Updated)
+* 전원을 넣고 F12를 눌러 USB로 부팅합니다.
+  * 가끔 USB가 목록에 뜨지 않으면 F2를 눌러 Boot Sequence에서 수동으로 BOOTX64.efi를 잡아줘야합니다.
+* clover 부트 선택지가 나타나면 F4 (혹은 Fn+F4) 를 누릅니다.
+* clover를 종료합니다.
+* VM웨어의 MacOS 혹은 Windows의 PartitionWizard + Explorer++를 통해 USB의 EFI영역을 마운트합니다.
+* EFI/CLOVER/ACPI/origin 폴더의 내용을 /ACPI/Patched에 덮어씌웁니다.
 
 ### 3. OS설치
 * 전원을 넣고 F12를 눌러 USB로 부팅합니다.
-  * 가끔 USB가 목록에 뜨지 않으면 F2를 눌러 Boot Sequence에서 수동으로 BOOTX64.efi를 잡아줘야합니다.
 * Mojave installer 로 부팅하여 설치를 진행합니다.
 * 디스크 유틸리티를 이용합니다.
   * 표시되는 창의 우측상단의 아이콘을 눌러 모든 기기 보기로 바꿉니다.
@@ -74,6 +87,9 @@
 ## 4. Post-install
 * 설치 후 일부 기능이 동작하지 않을 수 있습니다. 대표적으로 잠자기와 스피드스탭 등입니다.
 * 첨부된 post-install.command를 실행하여 명령에 따릅니다. xcode를 설치해야 합니다.
+* (2020.04 Updated) 해당 파일을 실행할 경우, Clover 부트로더가 깨져 진입이 불가능할 수 있습니다.
+  * 이럴 경우, USB를 통해 다시 부팅하여 이 Repo의 /CLOVER를 다시 SSD의 EFI파티션에 덮어씌우면 됩니다.
+  * 해당 과정을 아예 진행하지 않을 경우, 스피드스탭이 동작하지 않습니다.
 
 ## 5. Clover 설치
 * 이번에는 설치한 SSD에 클로버 부트로더를 설치합니다.
